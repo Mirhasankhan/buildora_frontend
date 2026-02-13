@@ -47,7 +47,11 @@ const ProjectsPage = () => {
               Manage and view all your construction projects
             </p>
           </header>
-          <Link href="/create-project"><button className="bg-primary px-6 py-2 rounded-[6px] text-white font-medium">Create New Project</button></Link>
+          <Link href="/create-project">
+            <button className="bg-primary px-6 py-2 rounded-[6px] text-white font-medium">
+              Create New Project
+            </button>
+          </Link>
         </div>
 
         {projectList.length === 0 ? (
@@ -104,14 +108,13 @@ const ProjectsPage = () => {
                   <div className="space-y-3">
                     {/* Manager */}
                     <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-primary text-white text-[10px] font-semibold flex items-center justify-center flex-shrink-0">
-                        {project.manager.userName
-                          ?.split(" ")
-                          .map((part: string) => part[0])
-                          .join("")
-                          .slice(0, 2)
-                          .toUpperCase()}
-                      </div>
+                      <Image
+                        src={project.manager.profileImage || "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png"}
+                        alt=""
+                        height={16}
+                        width={16}
+                        className="h-8 w-8 rounded-full"
+                      ></Image>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-gray-500">Manager</p>
                         <p className="text-sm font-medium text-gray-900 truncate">
@@ -127,8 +130,8 @@ const ProjectsPage = () => {
                         className="text-gray-500 flex-shrink-0"
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          {project._count.workerProfiles} Worker
+                        <p className="text-sm font-medium text-gray-600">
+                          {project._count.workerProfiles} Active Worker
                           {project._count.workerProfiles !== 1 ? "s" : ""}
                         </p>
                       </div>
