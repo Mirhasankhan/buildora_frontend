@@ -109,7 +109,10 @@ const ProjectsPage = () => {
                     {/* Manager */}
                     <div className="flex items-center gap-2">
                       <Image
-                        src={project.manager.profileImage || "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png"}
+                        src={
+                          project.manager.profileImage ||
+                          "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png"
+                        }
                         alt=""
                         height={16}
                         width={16}
@@ -139,9 +142,12 @@ const ProjectsPage = () => {
                   </div>
 
                   {/* Action Button */}
-                  <button className="w-full mt-4 px-4 py-2 bg-primary text-white rounded-[6px] font-medium text-sm hover:opacity-90 transition-opacity">
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className="block text-center w-full mt-4 px-4 py-2 bg-primary text-white rounded-[6px] font-medium text-sm hover:opacity-90 transition-opacity"
+                  >
                     View Details
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

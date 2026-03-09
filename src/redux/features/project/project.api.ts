@@ -18,7 +18,18 @@ const projectApi = baseApi.injectEndpoints({
       }),
       providesTags: ["projects"],
     }),
+    projectDetails: builder.query({
+      query: (id) => ({
+        url: `/project/details/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["projects"],
+    }),
   }),
 });
 
-export const { useCreateProjectMutation, useAllProjectsQuery } = projectApi;
+export const {
+  useCreateProjectMutation,
+  useAllProjectsQuery,
+  useProjectDetailsQuery,
+} = projectApi;
