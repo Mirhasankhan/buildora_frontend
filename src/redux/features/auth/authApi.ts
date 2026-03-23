@@ -95,9 +95,9 @@ const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["users"],
     }),
 
-    allUsers: builder.query({
-      query: ({ searchQuery, selectedRole, page, limit }) => ({
-        url: `/analysis/all-users?search=${searchQuery}&role=${selectedRole}&page=${page}&limit=${limit}`,
+    allWorkers: builder.query({
+      query: (page) => ({
+        url: `/users/all-workers?page=${page}`,
         method: "GET",
       }),
       providesTags: ["users"],
@@ -121,7 +121,7 @@ export const {
   useUpdateImageMutation,
   useUpdateprofileImageMutation,
   useLoginMutation,
-  useAllUsersQuery,
+  useAllWorkersQuery,
   useUpdateProfileMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,

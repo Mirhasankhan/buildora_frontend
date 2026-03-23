@@ -10,10 +10,16 @@ const projectApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["projects"],
     }),
-
     allProjects: builder.query({
       query: () => ({
         url: "/project/all",
+        method: "GET",
+      }),
+      providesTags: ["projects"],
+    }),
+    managerProjects: builder.query({
+      query: () => ({
+        url: "/project/site-manager-wise",
         method: "GET",
       }),
       providesTags: ["projects"],
@@ -32,4 +38,5 @@ export const {
   useCreateProjectMutation,
   useAllProjectsQuery,
   useProjectDetailsQuery,
+  useManagerProjectsQuery,
 } = projectApi;
