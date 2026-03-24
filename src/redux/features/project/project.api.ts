@@ -10,9 +10,31 @@ const projectApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["projects"],
     }),
+    assignWorker: builder.mutation({
+      query: (payload) => ({
+        url: "/project/assign-worker",
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: ["projects"],
+    }),
+    removeWorker: builder.mutation({
+      query: (id) => ({
+        url: `/project/remove-worker/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["projects"],
+    }),
     allProjects: builder.query({
       query: () => ({
         url: "/project/all",
+        method: "GET",
+      }),
+      providesTags: ["projects"],
+    }),
+    freeWorkers: builder.query({
+      query: (workerCategory) => ({
+        url: `/project/free-workers?workerCategory=${workerCategory}`,
         method: "GET",
       }),
       providesTags: ["projects"],
@@ -39,4 +61,7 @@ export const {
   useAllProjectsQuery,
   useProjectDetailsQuery,
   useManagerProjectsQuery,
+  useFreeWorkersQuery,
+  useAssignWorkerMutation,
+  useRemoveWorkerMutation,
 } = projectApi;

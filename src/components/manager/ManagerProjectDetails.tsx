@@ -1,6 +1,9 @@
 "use client";
 
-import { useProjectDetailsQuery } from "@/redux/features/project/project.api";
+import {
+  useProjectDetailsQuery,
+  useRemoveWorkerMutation,
+} from "@/redux/features/project/project.api";
 import Container from "@/utils/Container";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +18,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
+import AddWorker from "./AddWorker";
 
 const fallbackAvatar =
   "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png";
@@ -101,6 +105,13 @@ const ManagerProjectDetails = () => {
     skip: !projectId,
   });
 
+  const [removeWorker] = useRemoveWorkerMutation();
+
+  const handleRemoveWorker = async (workerId: number) => {
+    const res = await removeWorker(workerId).unwrap();
+    console.log(res);
+  };
+
   const project = data?.result;
   const [paidCount, setPaidCount] = useState(0);
 
@@ -173,7 +184,7 @@ const ManagerProjectDetails = () => {
 
   return (
     <Container className="py-8 md:py-10">
-      <div className="space-y-6">
+      <div className="space-y-6 rounded-[20px] bg-gradient-to-b from-slate-50/70 via-white to-white p-3 sm:p-4 md:p-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-sm text-gray-500">Project Details</p>
@@ -189,7 +200,7 @@ const ManagerProjectDetails = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-2 bg-white rounded-[12px] border border-gray-100 overflow-hidden">
+          <section className="lg:col-span-2 bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-22px_rgba(15,23,42,0.35)] overflow-hidden">
             <div className="relative h-56 sm:h-72 md:h-80 w-full bg-gray-200">
               <Image
                 src={project.projectImage}
@@ -198,32 +209,33 @@ const ManagerProjectDetails = () => {
                 className="object-cover"
                 priority
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             </div>
 
             <div className="p-4 sm:p-6 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <MapPin className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>{project.address}</p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <Users className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>
                     {totalWorkers} Active Worker
                     {totalWorkers === 1 ? "" : "s"}
                   </p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <Calendar className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>Created: {formatDate(project.createdAt)}</p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <CheckCircle2 className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>Updated: {formatDate(project.updatedAt)}</p>
                 </div>
               </div>
 
-              <div>
+              <div className="rounded-[12px] border border-slate-200 bg-white p-4 sm:p-5">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Description
                 </h2>
@@ -235,17 +247,12 @@ const ManagerProjectDetails = () => {
           </section>
 
           <aside className="space-y-6">
-            <div className="bg-white rounded-[6px] border border-gray-100 p-5">
+            <div className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-5">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">
                   Worker Team
                 </h2>
-                <button
-                  type="button"
-                  className="rounded-[8px] border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Add Worker
-                </button>
+                <AddWorker projectId={projectId}></AddWorker>
               </div>
 
               {project.workerProfiles.length === 0 ? (
@@ -257,7 +264,7 @@ const ManagerProjectDetails = () => {
                   {project.workerProfiles.map((workerProfile: any) => (
                     <div
                       key={workerProfile.id}
-                      className="flex items-center justify-between gap-2 rounded-[6px] border border-gray-100 p-3"
+                      className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <Image
@@ -267,7 +274,7 @@ const ManagerProjectDetails = () => {
                           alt={workerProfile.worker.userName}
                           width={36}
                           height={36}
-                          className="rounded-full"
+                          className="rounded-full border object-cover h-12 w-12 border-white shadow-sm"
                         />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
@@ -279,10 +286,13 @@ const ManagerProjectDetails = () => {
                         </div>
                       </div>
                       <button
+                        onClick={() =>
+                          handleRemoveWorker(workerProfile.workerId)
+                        }
                         type="button"
-                        className="rounded-[8px] border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                        className="rounded-[8px] border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
                       >
-                        Remove Worker
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -290,7 +300,7 @@ const ManagerProjectDetails = () => {
               )}
             </div>
 
-            <div className="bg-white rounded-[12px] border border-gray-100 p-5">
+            <div className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-5">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Pay Salary
               </h2>
@@ -313,7 +323,7 @@ const ManagerProjectDetails = () => {
                         type="button"
                         onClick={() => handlePaySalary(index)}
                         disabled={!isPayable}
-                        className={`w-full rounded-[8px] px-3 py-2 text-sm font-medium border text-left ${
+                        className={`w-full rounded-[10px] px-3 py-2 text-sm font-medium border text-left transition-colors ${
                           isAlreadyPaid
                             ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                             : isPayable
@@ -332,7 +342,7 @@ const ManagerProjectDetails = () => {
           </aside>
         </div>
 
-        <section className="bg-white rounded-[12px] border border-gray-100 p-4 sm:p-6">
+        <section className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <BadgeDollarSign className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-gray-900">
@@ -343,7 +353,7 @@ const ManagerProjectDetails = () => {
             {feeItems.map((fee) => (
               <div
                 key={fee.label}
-                className="rounded-[6px] border border-gray-100 p-4 flex items-center justify-between"
+                className="rounded-[10px] border border-slate-200 bg-slate-50/70 p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {fee.label === "Electrician" ||

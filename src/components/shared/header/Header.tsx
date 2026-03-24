@@ -10,7 +10,7 @@ const Header = () => {
         <div className="flex justify-between items-center ">
           <div className="flex items-center gap-2">
             <Image className="h-8 w-8 rounded-full" src={logo} alt="Logo" height={40} width={40} />
-            <h1 className="font-medium">Buildora</h1>
+            <h1 className="font-medium">abiola</h1>
           </div>
           <div className="flex gap-6 text-lg font-medium">
             <Link href="/">Overview</Link>

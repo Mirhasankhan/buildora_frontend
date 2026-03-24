@@ -117,7 +117,7 @@ const AdminProjectDetails = () => {
 
   return (
     <Container className="py-8 md:py-10">
-      <div className="space-y-6">
+      <div className="space-y-6 rounded-[20px] bg-gradient-to-b from-slate-50/70 via-white to-white p-3 sm:p-4 md:p-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-sm text-gray-500">Project Details</p>
@@ -133,7 +133,7 @@ const AdminProjectDetails = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-2 bg-white rounded-[12px] border border-gray-100 overflow-hidden">
+          <section className="lg:col-span-2 bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-22px_rgba(15,23,42,0.35)] overflow-hidden">
             <div className="relative h-56 sm:h-72 md:h-80 w-full bg-gray-200">
               <Image
                 src={project.projectImage}
@@ -142,32 +142,33 @@ const AdminProjectDetails = () => {
                 className="object-cover"
                 priority
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             </div>
 
             <div className="p-4 sm:p-6 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <MapPin className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>{project.address}</p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <Users className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>
                     {project._count.workerProfiles} Active Worker
                     {project._count.workerProfiles === 1 ? "" : "s"}
                   </p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <Calendar className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>Created: {formatDate(project.createdAt)}</p>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3">
                   <CheckCircle2 className="h-4 w-4 mt-0.5 text-gray-500" />
                   <p>Updated: {formatDate(project.updatedAt)}</p>
                 </div>
               </div>
 
-              <div>
+              <div className="rounded-[12px] border border-slate-200 bg-white p-4 sm:p-5">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Description
                 </h2>
@@ -179,17 +180,17 @@ const AdminProjectDetails = () => {
           </section>
 
           <aside className="space-y-6">
-            <div className="bg-white rounded-[12px] border border-gray-100 p-5">
+            <div className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-5">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Manager
               </h2>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 rounded-[12px] border border-slate-200 bg-slate-50/70 p-3">
                 <Image
                   src={project.manager.profileImage || fallbackAvatar}
                   alt={project.manager.userName}
                   width={52}
                   height={52}
-                  className="rounded-full border border-gray-100"
+                  className="rounded-full border border-white shadow-sm"
                 />
                 <div>
                   <p className="text-sm text-gray-500">Site Manager</p>
@@ -200,7 +201,7 @@ const AdminProjectDetails = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-[6px] border border-gray-100 p-5">
+            <div className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-5">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Worker Team
               </h2>
@@ -214,7 +215,7 @@ const AdminProjectDetails = () => {
                   {project.workerProfiles.map((workerProfile: any) => (
                     <div
                       key={workerProfile.id}
-                      className="flex items-center justify-between gap-2 rounded-[6px] border border-gray-100 p-3"
+                      className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <Image
@@ -224,7 +225,7 @@ const AdminProjectDetails = () => {
                           alt={workerProfile.worker.userName}
                           width={36}
                           height={36}
-                          className="rounded-full"
+                          className="rounded-full border border-white shadow-sm"
                         />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
@@ -244,7 +245,7 @@ const AdminProjectDetails = () => {
           </aside>
         </div>
 
-        <section className="bg-white rounded-[12px] border border-gray-100 p-4 sm:p-6">
+        <section className="bg-white rounded-[16px] border border-slate-200/80 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.3)] p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <BadgeDollarSign className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-gray-900">
@@ -255,7 +256,7 @@ const AdminProjectDetails = () => {
             {feeItems.map((fee) => (
               <div
                 key={fee.label}
-                className="rounded-[6px] border border-gray-100 p-4 flex items-center justify-between"
+                className="rounded-[10px] border border-slate-200 bg-slate-50/70 p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {fee.label === "Electrician" ||
