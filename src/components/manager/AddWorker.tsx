@@ -26,6 +26,8 @@ import { toast } from "react-toastify";
 
 type AddWorkerProps = {
   projectId: string;
+  disabled?: boolean;
+  disabledReason?: string;
 };
 
 const workerCategories = [
@@ -44,7 +46,11 @@ const formatWorkerCategory = (category: string) => {
   return category.replaceAll("_", " ");
 };
 
-const AddWorker = ({ projectId }: AddWorkerProps) => {
+const AddWorker = ({
+  projectId,
+  disabled = false,
+  disabledReason,
+}: AddWorkerProps) => {
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedWorkerId, setSelectedWorkerId] = useState("");
@@ -61,6 +67,11 @@ const AddWorker = ({ projectId }: AddWorkerProps) => {
   }, [freeWorkers]);
 
   const handleModalChange = (isOpen: boolean) => {
+    if (isOpen && disabled) {
+      toast.warning(disabledReason || "Action is currently disabled.");
+      return;
+    }
+
     setOpen(isOpen);
     if (!isOpen) {
       setSelectedCategory("");
@@ -104,7 +115,11 @@ const AddWorker = ({ projectId }: AddWorkerProps) => {
     <div>
       <Dialog open={open} onOpenChange={handleModalChange}>
         <DialogTrigger asChild>
-          <button className="group inline-flex items-center gap-2 rounded-[10px] border border-primary/20 bg-gradient-to-r from-primary to-primary/80 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+          <button
+            disabled={disabled}
+            title={disabled ? disabledReason : undefined}
+            className="group inline-flex items-center gap-2 rounded-[10px] border border-primary/20 bg-gradient-to-r from-primary to-primary/80 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-sm"
+          >
             <Plus size={16} />
             Add Worker
             <Sparkles
