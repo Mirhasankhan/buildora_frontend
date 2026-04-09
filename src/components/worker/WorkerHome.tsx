@@ -13,6 +13,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useProfileQuery } from "@/redux/features/auth/authApi";
+import Link from "next/link";
 
 type PaymentRecord = {
   amount?: number;
@@ -320,18 +321,23 @@ const WorkerHome = () => {
 
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="overflow-hidden rounded-[28px] border border-stone-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
-          <div className="border-b border-stone-200 px-5 py-4 sm:px-6">
-            <h2 className="text-xl font-semibold text-stone-900">
-              Earnings History
-            </h2>
-            <p className="mt-1 text-sm text-stone-500">
-              Recent payment entries for this assignment.
-            </p>
+          <div className="border-b flex justify-between items-center border-stone-200 px-5 py-4 sm:px-6">
+            <div>
+              <h2 className="text-xl font-semibold text-stone-900">
+                Earnings History
+              </h2>
+              <p className="mt-1 text-sm text-stone-500">
+                Recent payment entries for this assignment.
+              </p>
+            </div>
+            <Link href="/earnings" className="text-blue-500 hover:text-blue-700">
+              View All
+            </Link>
           </div>
 
           <div className="divide-y divide-stone-100">
             {payments.length > 0 ? (
-              payments.map((payment, index) => (
+              payments?.slice(0, 5).map((payment, index) => (
                 <div
                   key={`${payment.createdAt ?? "payment"}-${index}`}
                   className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6"

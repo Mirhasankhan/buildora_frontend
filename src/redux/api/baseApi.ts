@@ -23,6 +23,7 @@ export const baseApi = createApi({
     "projects",
     "earnings",
     "payment",
+    'withdraw',
   ],
   endpoints: () => ({}),
 });
