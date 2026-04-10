@@ -72,7 +72,7 @@ const authApi = baseApi.injectEndpoints({
     }),
     updateImage: builder.mutation({
       query: (image) => ({
-        url: "/users/update/profileImage",
+        url: "/users/update-profile-image",
         method: "PUT",
         body: image,
       }),
@@ -80,7 +80,7 @@ const authApi = baseApi.injectEndpoints({
     }),
     updateProfile: builder.mutation({
       query: (data) => ({
-        url: "/auth/update",
+        url: "/users/update-profile-details",
         method: "PUT",
         body: data,
       }),
@@ -125,5 +125,7 @@ export const {
   useUpdateProfileMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,
-  useSiteManagersQuery
+  useSiteManagersQuery,
+  useChangePasswordMutation,
+  
 } = authApi;

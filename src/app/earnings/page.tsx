@@ -61,7 +61,7 @@ const EarningsPage = () => {
               </div>
 
               <Link
-                href="/withdraw"
+                href="/withdraws"
                 className="inline-flex w-full items-center justify-center rounded-xl border border-white/25 bg-white px-4 py-2 text-sm font-semibold text-primary shadow-md transition hover:bg-white/90 sm:w-auto"
               >
                 Withnow Earnings

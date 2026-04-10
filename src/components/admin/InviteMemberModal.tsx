@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 type InviteFormData = {
   email: string;
   role: "SITE_MANAGER" | "WORKER";
-  workerType?: string;
+  workerCategory?: string;
 };
 
 const InviteMemberModal = () => {
@@ -36,7 +36,7 @@ const InviteMemberModal = () => {
     const payload = {
       email: data.email,
       role: data.role,
-      workerType: data.role === "WORKER" ? data.workerType : undefined,
+      workerCategory: data.role === "WORKER" ? data.workerCategory : undefined,
     };
 
     try {
@@ -110,14 +110,14 @@ const InviteMemberModal = () => {
                 Worker Type
               </label>
               <select
-                {...register("workerType", {
+                {...register("workerCategory", {
                   validate: (value) =>
                     role !== "WORKER" || value
                       ? true
                       : "Worker type is required",
                 })}
                 className={`input-design ${
-                  errors.workerType && "border-red-500 focus:ring-red-400"
+                  errors.workerCategory && "border-red-500 focus:ring-red-400"
                 }`}
                 defaultValue=""
               >
@@ -134,9 +134,9 @@ const InviteMemberModal = () => {
                 <option value="Mason">Mason</option>
                 <option value="Welder">Welder</option>
               </select>
-              {errors.workerType && (
+              {errors.workerCategory && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.workerType.message}
+                  {errors.workerCategory.message}
                 </p>
               )}
             </div>
