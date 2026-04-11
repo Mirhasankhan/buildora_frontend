@@ -2,14 +2,11 @@
 
 import logo from "@/assets/banner.jpg";
 import Container from "@/utils/Container";
-import { setUser } from "@/redux/features/auth/authSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import { useProfileQuery } from "@/redux/features/auth/authApi";
 import { JWTDecode } from "@/utils/jwt";
-import Cookies from "js-cookie";
-import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 type AppRole = "ADMIN" | "SITE_MANAGER" | "WORKER";
 
@@ -45,27 +42,15 @@ const isRouteActive = (pathname: string, href: string) => {
 
 const Header = () => {
   const pathname = usePathname();
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   const { decoded } = JWTDecode();
+  const { data } = useProfileQuery("");
 
   const role = decoded?.role as AppRole | undefined;
   const navItems = role
     ? roleNavItems[role]
     : [{ label: "Overview", href: "/" }];
 
-  const handleLogout = () => {
-    dispatch(
-      setUser({
-        name: "",
-        email: "",
-        role: "",
-        token: "",
-      }),
-    );
-    Cookies.remove("token");
-    router.push("/");
-  };
+  const profileImage = data?.result?.profileImage as string | undefined;
 
   return (
     <div className="border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur-md">
@@ -103,13 +88,23 @@ const Header = () => {
             })}
 
             {role && (
-              <button
-                onClick={handleLogout}
-                className="ml-1 inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
+              <Link href="/profile" className="ml-1" aria-label="Go to profile">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full border border-stone-200 bg-stone-100 ring-2 ring-transparent transition hover:ring-orange-200">
+                  {profileImage ? (
+                    <Image
+                      src={profileImage}
+                      alt="Profile"
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-stone-500">
+                      {decoded?.userName?.[0] || "U"}
+                    </div>
+                  )}
+                </div>
+              </Link>
             )}
           </div>
         </div>
