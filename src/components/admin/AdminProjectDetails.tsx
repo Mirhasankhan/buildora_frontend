@@ -1,9 +1,22 @@
 "use client";
-import { useProjectDetailsQuery } from "@/redux/features/project/project.api";
+import {
+  useProjectDetailsQuery,
+  useReplaceManagerMutation,
+} from "@/redux/features/project/project.api";
+import { useSiteManagersQuery } from "@/redux/features/auth/authApi";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Container from "@/utils/Container";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   BadgeDollarSign,
   Calendar,
@@ -13,6 +26,7 @@ import {
   User,
   Users,
   Wrench,
+  RefreshCw,
 } from "lucide-react";
 
 const fallbackAvatar =
@@ -54,12 +68,46 @@ const AdminProjectDetails = () => {
     ? rawProjectId[0]
     : rawProjectId;
 
+  const [selectedManagerId, setSelectedManagerId] = useState("");
+  const [isReplacing, setIsReplacing] = useState(false);
+
   const { data, isLoading, isError } = useProjectDetailsQuery(projectId, {
     skip: !projectId,
   });
 
+  const { data: managersData } = useSiteManagersQuery({});
+  const [replaceManager] = useReplaceManagerMutation();
+
   const project = data?.result;
-  console.log(project);
+  const managers = managersData?.result || [];
+
+  const handleReplaceManager = async () => {
+    if (!selectedManagerId) {
+      toast.warning("Please select a manager to replace");
+      return;
+    }
+
+    if (selectedManagerId === project.manager.id) {
+      toast.info("Selected manager is already the current manager");
+      return;
+    }
+
+    const payload = {
+      projectId: projectId!,
+      newManagerId: selectedManagerId,
+    };
+
+    try {
+      setIsReplacing(true);
+      const response = await replaceManager(payload).unwrap();
+      toast.success(response?.message || "Manager replaced successfully");
+      setSelectedManagerId("");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to replace manager");
+    } finally {
+      setIsReplacing(false);
+    }
+  };
 
   const feeItems = project
     ? [
@@ -184,19 +232,70 @@ const AdminProjectDetails = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Manager
               </h2>
-              <div className="flex items-center gap-3 rounded-[12px] border border-slate-200 bg-slate-50/70 p-3">
-                <Image
-                  src={project.manager.profileImage || fallbackAvatar}
-                  alt={project.manager.userName}
-                  width={52}
-                  height={52}
-                  className="rounded-full border border-white shadow-sm"
-                />
-                <div>
-                  <p className="text-sm text-gray-500">Site Manager</p>
-                  <p className="font-semibold text-gray-900">
-                    {project.manager.userName}
-                  </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 rounded-[12px] border border-slate-200 bg-slate-50/70 p-3">
+                  <Image
+                    src={project.manager.profileImage || fallbackAvatar}
+                    alt={project.manager.userName}
+                    width={52}
+                    height={52}
+                    className="rounded-full h-12 w-12 object-cover border border-white shadow-sm"
+                  />
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      Current Site Manager
+                    </p>
+                    <p className="font-semibold text-gray-900">
+                      {project.manager.userName}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Replace Manager
+                  </label>
+                  <Select
+                    value={selectedManagerId}
+                    onValueChange={setSelectedManagerId}
+                  >
+                    <SelectTrigger className="h-10 rounded-[10px] border-slate-200 bg-white text-sm shadow-sm focus:ring-2 focus:ring-primary/20">
+                      <SelectValue placeholder="Select a new manager..." />
+                    </SelectTrigger>
+                    <SelectContent className="z-[80] rounded-[10px] border border-slate-200 bg-white text-gray-900 shadow-xl">
+                      {managers.length === 0 ? (
+                        <div className="p-2 text-sm text-gray-500">
+                          No managers available
+                        </div>
+                      ) : (
+                        managers
+                          .filter(
+                            (manager: any) => manager.id !== project.manager.id,
+                          )
+                          .map((manager: any) => (
+                            <SelectItem
+                              key={manager.id}
+                              value={manager.id}
+                              className="text-gray-800 focus:bg-primary/10 focus:text-primary"
+                            >
+                              {manager.userName}
+                            </SelectItem>
+                          ))
+                      )}
+                    </SelectContent>
+                  </Select>
+
+                  <button
+                    onClick={handleReplaceManager}
+                    disabled={!selectedManagerId || isReplacing}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary"
+                  >
+                    <RefreshCw
+                      size={16}
+                      className={isReplacing ? "animate-spin" : ""}
+                    />
+                    {isReplacing ? "Replacing..." : "Replace Manager"}
+                  </button>
                 </div>
               </div>
             </div>
@@ -225,7 +324,7 @@ const AdminProjectDetails = () => {
                           alt={workerProfile.worker.userName}
                           width={36}
                           height={36}
-                          className="rounded-full border border-white shadow-sm"
+                          className="rounded-full h-12 w-12 object-cover border border-white shadow-sm"
                         />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">

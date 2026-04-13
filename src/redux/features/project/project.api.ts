@@ -18,6 +18,14 @@ const projectApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["projects"],
     }),
+    replaceManager: builder.mutation({
+      query: (payload) => ({
+        url: "/project/replace-site-manager",
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: ["projects"],
+    }),
     removeWorker: builder.mutation({
       query: (id) => ({
         url: `/project/remove-worker/${id}`,
@@ -64,4 +72,5 @@ export const {
   useFreeWorkersQuery,
   useAssignWorkerMutation,
   useRemoveWorkerMutation,
+  useReplaceManagerMutation,
 } = projectApi;

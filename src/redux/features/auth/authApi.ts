@@ -96,8 +96,8 @@ const authApi = baseApi.injectEndpoints({
     }),
 
     allWorkers: builder.query({
-      query: (page) => ({
-        url: `/users/all-workers?page=${page}`,
+      query: ({page,search,workerCategory}) => ({
+        url: `/users/all-workers?page=${page}&search=${search}&workerCategory=${workerCategory}`,
         method: "GET",
       }),
       providesTags: ["users"],
