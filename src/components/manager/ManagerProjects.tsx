@@ -199,12 +199,16 @@ const ManagerProjects = () => {
                           View Details
                         </button>
                       </Link>
-                      <button
-                        type="button"
-                        className="w-full rounded-[8px] border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      <Link
+                        href={`/messages?tab=group&projectId=${project.id}`}
                       >
-                        Message
-                      </button>
+                        <button
+                          type="button"
+                          className="w-full rounded-[8px] border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                          Message
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </article>

@@ -296,47 +296,71 @@ const ManagerProjectDetails = () => {
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {project.workerProfiles.map((workerProfile: any) => (
-                    <div
-                      key={workerProfile.id}
-                      className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Image
-                          src={
-                            workerProfile.worker.profileImage || fallbackAvatar
-                          }
-                          alt={workerProfile.worker.userName}
-                          width={36}
-                          height={36}
-                          className="rounded-full border object-cover h-12 w-12 border-white shadow-sm"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {workerProfile.worker.userName}
-                          </p>
-                          <p className="text-xs text-gray-500 truncate">
-                            {workerProfile.workerCategory}
-                          </p>
+                  {project.workerProfiles.map((workerProfile: any) =>
+                    (() => {
+                      const workerUserId =
+                        workerProfile?.worker?.id ||
+                        workerProfile?.workerId ||
+                        workerProfile?.worker?.userId;
+
+                      return (
+                        <div
+                          key={workerProfile.id}
+                          className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Image
+                              src={
+                                workerProfile.worker.profileImage ||
+                                fallbackAvatar
+                              }
+                              alt={workerProfile.worker.userName}
+                              width={36}
+                              height={36}
+                              className="rounded-full border object-cover h-12 w-12 border-white shadow-sm"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">
+                                {workerProfile.worker.userName}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {workerProfile.workerCategory}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {workerUserId ? (
+                              <Link
+                                href={`/messages?tab=member&receiverId=${workerUserId}`}
+                                className="rounded-[8px] border border-primary/30 bg-white px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/5"
+                              >
+                                Message
+                              </Link>
+                            ) : (
+                              <span className="rounded-[8px] border border-slate-200 bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-400">
+                                Message
+                              </span>
+                            )}
+                            <button
+                              onClick={() =>
+                                handleRemoveWorker(workerProfile.workerId)
+                              }
+                              type="button"
+                              disabled={hasPendingPayments}
+                              title={
+                                hasPendingPayments
+                                  ? "Clear pending salary payments first."
+                                  : undefined
+                              }
+                              className="rounded-[8px] border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        onClick={() =>
-                          handleRemoveWorker(workerProfile.workerId)
-                        }
-                        type="button"
-                        disabled={hasPendingPayments}
-                        title={
-                          hasPendingPayments
-                            ? "Clear pending salary payments first."
-                            : undefined
-                        }
-                        className="rounded-[8px] border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
+                      );
+                    })(),
+                  )}
                 </div>
               )}
             </div>

@@ -23,7 +23,6 @@ import {
   CheckCircle2,
   HardHat,
   MapPin,
-  User,
   Users,
   Wrench,
   RefreshCw,
@@ -80,6 +79,8 @@ const AdminProjectDetails = () => {
 
   const project = data?.result;
   const managers = managersData?.result || [];
+  const managerUserId =
+    project?.manager?.id || project?.managerId || project?.manager?.userId;
 
   const handleReplaceManager = async () => {
     if (!selectedManagerId) {
@@ -251,6 +252,19 @@ const AdminProjectDetails = () => {
                   </div>
                 </div>
 
+                {managerUserId ? (
+                  <Link
+                    href={`/messages?tab=member&receiverId=${managerUserId}&receiverName=${encodeURIComponent(project.manager.userName || "Manager")}`}
+                    className="inline-flex w-full items-center justify-center rounded-[10px] border border-primary/30 bg-white px-3 py-2 text-sm font-semibold text-primary transition hover:bg-primary/5"
+                  >
+                    Message Manager
+                  </Link>
+                ) : (
+                  <span className="inline-flex w-full items-center justify-center rounded-[10px] border border-slate-200 bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-400">
+                    Message Manager
+                  </span>
+                )}
+
                 <div className="space-y-2">
                   <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Replace Manager
@@ -311,33 +325,54 @@ const AdminProjectDetails = () => {
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {project.workerProfiles.map((workerProfile: any) => (
-                    <div
-                      key={workerProfile.id}
-                      className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Image
-                          src={
-                            workerProfile.worker.profileImage || fallbackAvatar
-                          }
-                          alt={workerProfile.worker.userName}
-                          width={36}
-                          height={36}
-                          className="rounded-full h-12 w-12 object-cover border border-white shadow-sm"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {workerProfile.worker.userName}
-                          </p>
-                          <p className="text-xs text-gray-500 truncate">
-                            {workerProfile.workerCategory}
-                          </p>
+                  {project.workerProfiles.map((workerProfile: any) =>
+                    (() => {
+                      const workerUserId =
+                        workerProfile?.worker?.id ||
+                        workerProfile?.workerId ||
+                        workerProfile?.worker?.userId;
+
+                      return (
+                        <div
+                          key={workerProfile.id}
+                          className="flex items-center justify-between gap-2 rounded-[10px] border border-slate-200 bg-slate-50/70 p-3"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Image
+                              src={
+                                workerProfile.worker.profileImage ||
+                                fallbackAvatar
+                              }
+                              alt={workerProfile.worker.userName}
+                              width={36}
+                              height={36}
+                              className="rounded-full h-12 w-12 object-cover border border-white shadow-sm"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">
+                                {workerProfile.worker.userName}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {workerProfile.workerCategory}
+                              </p>
+                            </div>
+                          </div>
+                          {workerUserId ? (
+                            <Link
+                              href={`/messages?tab=member&receiverId=${workerUserId}`}
+                              className="rounded-[8px] border border-primary/30 bg-white px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/5"
+                            >
+                              Message
+                            </Link>
+                          ) : (
+                            <span className="rounded-[8px] border border-slate-200 bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-400">
+                              Message
+                            </span>
+                          )}
                         </div>
-                      </div>
-                      <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    </div>
-                  ))}
+                      );
+                    })(),
+                  )}
                 </div>
               )}
             </div>

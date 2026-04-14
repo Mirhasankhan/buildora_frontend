@@ -10,6 +10,7 @@ import {
   Send,
   Users,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type ChatTab = "member" | "group";
@@ -93,11 +94,40 @@ const getMessagePreview = (item?: MessageItem | null) => {
   return "No message yet";
 };
 
+const isSameMessage = (left: MessageItem, right: MessageItem) => {
+  return (
+    (left.createdAt || "") === (right.createdAt || "") &&
+    (left.senderId || "") === (right.senderId || "") &&
+    (left.content || "") === (right.content || "")
+  );
+};
+
 const MessagePage = () => {
   const { token, decoded } = JWTDecode();
   const currentUserId = decoded?.id as string | undefined;
+  const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<ChatTab>("member");
+  const initialTab = useMemo(() => {
+    const value = searchParams.get("tab");
+    return value === "group" ? "group" : "member";
+  }, [searchParams]);
+
+  const initialReceiverId = useMemo(
+    () => searchParams.get("receiverId")?.trim() || "",
+    [searchParams],
+  );
+
+  const initialReceiverName = useMemo(
+    () => searchParams.get("receiverName")?.trim() || "",
+    [searchParams],
+  );
+
+  const initialProjectId = useMemo(
+    () => searchParams.get("projectId")?.trim() || "",
+    [searchParams],
+  );
+
+  const [activeTab, setActiveTab] = useState<ChatTab>(initialTab);
   const [memberConversations, setMemberConversations] = useState<
     MemberConversation[]
   >([]);
@@ -114,7 +144,10 @@ const MessagePage = () => {
     useState<ProjectConversation | null>(null);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [messageText, setMessageText] = useState("");
-  const [receiverIdInput, setReceiverIdInput] = useState("");
+  const [selectedReceiverId, setSelectedReceiverId] =
+    useState(initialReceiverId);
+  const [selectedReceiverName, setSelectedReceiverName] =
+    useState(initialReceiverName);
   const [socketStatus, setSocketStatus] = useState<
     "connecting" | "open" | "closed"
   >("connecting");
@@ -126,6 +159,7 @@ const MessagePage = () => {
   const activeProjectRef = useRef<ProjectConversation | null>(null);
   const activeTabRef = useRef<ChatTab>("member");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const autoProjectTargetRef = useRef<string | null>(null);
 
   useEffect(() => {
     activeMemberRef.current = activeMember;
@@ -191,6 +225,9 @@ const MessagePage = () => {
           if (payload.roomId) {
             setActiveMemberRoomId(payload.roomId as string);
           }
+          if (payload.receiverId) {
+            setSelectedReceiverId(payload.receiverId as string);
+          }
           return;
         }
 
@@ -213,7 +250,10 @@ const MessagePage = () => {
             activeRoomId &&
             payload.roomId === activeRoomId
           ) {
-            setMessages((prev) => [...prev, msg]);
+            setMessages((prev) => {
+              if (prev.some((item) => isSameMessage(item, msg))) return prev;
+              return [...prev, msg];
+            });
           }
           return;
         }
@@ -226,7 +266,10 @@ const MessagePage = () => {
             activeProjectRoomId &&
             msg.projectRoomId === activeProjectRoomId
           ) {
-            setMessages((prev) => [...prev, msg]);
+            setMessages((prev) => {
+              if (prev.some((item) => isSameMessage(item, msg))) return prev;
+              return [...prev, msg];
+            });
           }
           return;
         }
@@ -275,6 +318,7 @@ const MessagePage = () => {
     setActiveMemberRoomId(conversation.roomId);
     setActiveProject(null);
     setMessages([]);
+    setSelectedReceiverId(receiverId);
 
     socketRef.current.send(
       JSON.stringify({
@@ -302,27 +346,107 @@ const MessagePage = () => {
     );
   };
 
-  const handleStartMemberChat = () => {
-    const receiverId = receiverIdInput.trim();
-    if (!receiverId) return;
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
-    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
-      return;
-    }
+  useEffect(() => {
+    setSelectedReceiverId(initialReceiverId);
+    setSelectedReceiverName(initialReceiverName);
+    setActiveMemberRoomId(null);
+  }, [initialReceiverId, initialReceiverName]);
+
+  useEffect(() => {
+    autoProjectTargetRef.current = null;
+  }, [initialProjectId]);
+
+  useEffect(() => {
+    if (socketStatus !== "open") return;
+    if (!initialReceiverId) return;
+
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    const targetConversation = memberConversations.find(
+      (conversation) => conversation.partner?.id === initialReceiverId,
+    );
 
     setActiveTab("member");
-    setActiveMember(null);
-    setActiveMemberRoomId(null);
     setActiveProject(null);
     setMessages([]);
+    setSelectedReceiverId(initialReceiverId);
+    setSelectedReceiverName(initialReceiverName);
 
-    socketRef.current.send(
+    if (targetConversation) {
+      setActiveMember(targetConversation);
+      setActiveMemberRoomId(targetConversation.roomId);
+    } else {
+      setActiveMember(null);
+      setActiveMemberRoomId(null);
+    }
+
+    socket.send(
       JSON.stringify({
         type: "member-subscribe",
-        receiverId,
+        receiverId: initialReceiverId,
       }),
     );
-  };
+  }, [
+    initialReceiverId,
+    initialReceiverName,
+    memberConversations,
+    socketStatus,
+  ]);
+
+  useEffect(() => {
+    if (activeTab !== "member") return;
+    if (socketStatus !== "open") return;
+    if (!selectedReceiverId) return;
+    if (activeMemberRoomId) return;
+
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    socket.send(
+      JSON.stringify({
+        type: "member-subscribe",
+        receiverId: selectedReceiverId,
+      }),
+    );
+  }, [activeMemberRoomId, activeTab, selectedReceiverId, socketStatus]);
+
+  useEffect(() => {
+    if (socketStatus !== "open") return;
+    if (!initialProjectId) return;
+    if (autoProjectTargetRef.current === initialProjectId) return;
+
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    const targetConversation = projectConversations.find(
+      (conversation) => conversation.project.id === initialProjectId,
+    );
+
+    setActiveTab("group");
+    setActiveMember(null);
+    setActiveMemberRoomId(null);
+    setMessages([]);
+
+    if (targetConversation) {
+      setActiveProject(targetConversation);
+    } else {
+      setActiveProject(null);
+    }
+
+    socket.send(
+      JSON.stringify({
+        type: "project-subscribe",
+        projectId: initialProjectId,
+      }),
+    );
+
+    autoProjectTargetRef.current = initialProjectId;
+  }, [initialProjectId, projectConversations, socketStatus]);
 
   const handleSendMessage = () => {
     const content = messageText.trim();
@@ -333,8 +457,9 @@ const MessagePage = () => {
     }
 
     if (activeTab === "member") {
-      const receiverId = activeMember?.partner?.id || receiverIdInput.trim();
+      const receiverId = activeMember?.partner?.id || selectedReceiverId.trim();
       if (!receiverId) return;
+      if (!activeMemberRoomId) return;
 
       socketRef.current.send(
         JSON.stringify({
@@ -365,7 +490,10 @@ const MessagePage = () => {
     if (messageText.trim().length === 0) return false;
 
     if (activeTab === "member") {
-      return Boolean(activeMember?.partner?.id || receiverIdInput.trim());
+      return Boolean(
+        (activeMember?.partner?.id || selectedReceiverId.trim()) &&
+        activeMemberRoomId,
+      );
     }
 
     return Boolean(activeProject?.projectRoomId);
@@ -374,9 +502,20 @@ const MessagePage = () => {
     activeProject?.projectRoomId,
     activeTab,
     messageText,
-    receiverIdInput,
+    selectedReceiverId,
     socketStatus,
+    activeMemberRoomId,
   ]);
+
+  const isSelectedReceiverInList = useMemo(() => {
+    if (!selectedReceiverId) return true;
+    return memberConversations.some(
+      (conversation) => conversation.partner?.id === selectedReceiverId,
+    );
+  }, [memberConversations, selectedReceiverId]);
+
+  const selectedMemberLabel =
+    activeMember?.partner?.userName || selectedReceiverName || "Selected user";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
@@ -398,65 +537,96 @@ const MessagePage = () => {
         </div>
       ) : null}
 
-      <div className="grid min-h-[70vh] grid-cols-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <aside className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-          <div className="mb-3 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab("member")}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                activeTab === "member"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500"
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <MessageSquareText size={16} />
-                Member Chat
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("group")}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                activeTab === "group"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500"
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Users size={16} />
-                Group Chat
-              </span>
-            </button>
+      <div className="grid min-h-[70vh] grid-cols-1 gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
+        <aside className="rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/70 p-3 shadow-[0_16px_35px_-24px_rgba(15,23,42,0.35)]">
+          <div className="mb-3 rounded-2xl border border-slate-200/80 bg-white/90 p-1 shadow-sm backdrop-blur">
+            <div className="grid grid-cols-2 gap-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("member")}
+                className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                  activeTab === "member"
+                    ? "bg-slate-900 text-white shadow"
+                    : "text-slate-500 hover:bg-slate-100"
+                }`}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <MessageSquareText size={16} />
+                  Member Chat
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("group")}
+                className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                  activeTab === "group"
+                    ? "bg-slate-900 text-white shadow"
+                    : "text-slate-500 hover:bg-slate-100"
+                }`}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <Users size={16} />
+                  Project Chat
+                </span>
+              </button>
+            </div>
           </div>
 
           {activeTab === "member" ? (
             <div className="space-y-3">
-              <div className="rounded-xl border border-slate-200 p-2">
-                <p className="mb-2 text-xs font-medium text-slate-500">
-                  Start member chat by user id
+              <div className="px-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Direct Conversations
                 </p>
-                <div className="flex gap-2">
-                  <input
-                    value={receiverIdInput}
-                    onChange={(event) => setReceiverIdInput(event.target.value)}
-                    placeholder="Receiver user id"
-                    className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-primary/20 focus:ring"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleStartMemberChat}
-                    className="rounded-lg bg-primary px-3 text-sm font-medium text-white"
-                  >
-                    Go
-                  </button>
-                </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="max-h-[58vh] space-y-2 overflow-y-auto pr-1">
+                {selectedReceiverId && !isSelectedReceiverInList ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const socket = socketRef.current;
+                      if (!socket || socket.readyState !== WebSocket.OPEN)
+                        return;
+
+                      setActiveTab("member");
+                      setActiveProject(null);
+                      setMessages([]);
+                      setActiveMember(null);
+                      setSelectedReceiverId(selectedReceiverId);
+
+                      socket.send(
+                        JSON.stringify({
+                          type: "member-subscribe",
+                          receiverId: selectedReceiverId,
+                        }),
+                      );
+                    }}
+                    className="w-full rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 to-white p-3.5 text-left shadow-sm transition hover:shadow"
+                  >
+                    <div className="flex items-center justify-between gap-2.5">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary ring-1 ring-primary/20">
+                          {getInitials(selectedMemberLabel)}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-semibold text-slate-800">
+                            {selectedMemberLabel}
+                          </h3>
+                          <p className="truncate text-[11px] text-slate-500">
+                            Direct message room
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-2 truncate text-xs font-medium text-slate-500">
+                      Ready to start conversation
+                    </p>
+                  </button>
+                ) : null}
+
                 {memberConversations.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white/80 p-4 text-sm text-slate-500">
                     No member conversation found.
                   </div>
                 ) : (
@@ -468,41 +638,49 @@ const MessagePage = () => {
                         type="button"
                         key={conversation.roomId}
                         onClick={() => handleSubscribeMember(conversation)}
-                        className={`w-full rounded-xl border p-3 text-left transition ${
+                        className={`w-full rounded-2xl border p-3.5 text-left transition-all duration-200 ${
                           isActive
-                            ? "border-primary bg-primary/5"
-                            : "border-slate-200 hover:bg-slate-50"
+                            ? "border-primary/40 bg-primary/10 shadow-sm ring-1 ring-primary/15"
+                            : "border-slate-200 bg-white/85 hover:border-slate-300 hover:bg-white hover:shadow-sm"
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-3">
                             <img
                               src={
                                 conversation.partner?.profileImage ||
                                 "https://ui-avatars.com/api/?name=User&background=e2e8f0&color=334155"
                               }
                               alt={conversation.partner?.userName || "User"}
-                              className="h-8 w-8 rounded-full object-cover"
+                              className="h-10 w-10 rounded-full object-cover ring-1 ring-slate-200"
                             />
-                            <h3 className="truncate text-sm font-semibold text-slate-800">
-                              {conversation.partner?.userName || "Unknown user"}
-                            </h3>
+                            <div className="min-w-0">
+                              <h3 className="truncate text-sm font-semibold text-slate-800">
+                                {conversation.partner?.userName ||
+                                  "Unknown user"}
+                              </h3>
+                              <p className="mt-0.5 truncate text-[12px] text-slate-500">
+                                {conversation.lastMessage?.content ||
+                                  "No message yet"}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-end gap-1">
                             {(conversation.unreadCount ?? 0) > 0 ? (
-                              <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white">
+                              <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
                                 {conversation.unreadCount}
                               </span>
                             ) : null}
                             {conversation.partner?.isActive ? (
                               <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                             ) : null}
+                            {conversation.lastMessage?.createdAt ? (
+                              <span className="text-[10px] font-medium text-slate-400">
+                                {formatTime(conversation.lastMessage.createdAt)}
+                              </span>
+                            ) : null}
                           </div>
                         </div>
-                        <p className="mt-1 truncate text-xs text-slate-500">
-                          {conversation.lastMessage?.content ||
-                            "No message yet"}
-                        </p>
                       </button>
                     );
                   })
@@ -510,63 +688,81 @@ const MessagePage = () => {
               </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              {projectConversations.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                  No accessible project group found.
-                </div>
-              ) : (
-                projectConversations.map((conversation) => {
-                  const isActive =
-                    (activeProject?.projectRoomId &&
-                      activeProject.projectRoomId ===
-                        conversation.projectRoomId) ||
-                    activeProject?.project.id === conversation.project.id;
-                  return (
-                    <button
-                      type="button"
-                      key={
-                        conversation.projectRoomId ?? conversation.project.id
-                      }
-                      onClick={() => handleSubscribeProject(conversation)}
-                      className={`w-full rounded-xl border p-3 text-left transition ${
-                        isActive
-                          ? "border-primary bg-primary/5"
-                          : "border-slate-200 hover:bg-slate-50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex min-w-0 items-center gap-2">
-                          <img
-                            src={
-                              conversation.project?.projectImage ||
-                              "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=120&q=60"
-                            }
-                            alt={conversation.project?.projectName || "Project"}
-                            className="h-8 w-8 rounded-lg object-cover"
-                          />
-                          <h3 className="truncate text-sm font-semibold text-slate-800">
-                            {conversation.project?.projectName || "Project"}
-                          </h3>
+            <div className="space-y-3">
+              <div className="px-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Project Rooms
+                </p>
+              </div>
+
+              <div className="max-h-[58vh] space-y-2 overflow-y-auto pr-1">
+                {projectConversations.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white/80 p-4 text-sm text-slate-500">
+                    No accessible project group found.
+                  </div>
+                ) : (
+                  projectConversations.map((conversation) => {
+                    const isActive =
+                      (activeProject?.projectRoomId &&
+                        activeProject.projectRoomId ===
+                          conversation.projectRoomId) ||
+                      activeProject?.project.id === conversation.project.id;
+                    return (
+                      <button
+                        type="button"
+                        key={
+                          conversation.projectRoomId ?? conversation.project.id
+                        }
+                        onClick={() => handleSubscribeProject(conversation)}
+                        className={`w-full rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                          isActive
+                            ? "border-primary/40 bg-primary/10 shadow-sm ring-1 ring-primary/15"
+                            : "border-slate-200 bg-white/85 hover:border-slate-300 hover:bg-white hover:shadow-sm"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <img
+                              src={
+                                conversation.project?.projectImage ||
+                                "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=120&q=60"
+                              }
+                              alt={
+                                conversation.project?.projectName || "Project"
+                              }
+                              className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200"
+                            />
+                            <div className="min-w-0">
+                              <h3 className="truncate text-sm font-semibold text-slate-800">
+                                {conversation.project?.projectName || "Project"}
+                              </h3>
+                              <p className="mt-0.5 truncate text-[12px] text-slate-500">
+                                {conversation.lastMessage?.content ||
+                                  "No message yet"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            {(conversation.unreadCount ?? 0) > 0 ? (
+                              <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
+                                {conversation.unreadCount}
+                              </span>
+                            ) : null}
+                            {conversation.project?.isActive ? (
+                              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                            ) : null}
+                            {conversation.lastMessage?.createdAt ? (
+                              <span className="text-[10px] font-medium text-slate-400">
+                                {formatTime(conversation.lastMessage.createdAt)}
+                              </span>
+                            ) : null}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {(conversation.unreadCount ?? 0) > 0 ? (
-                            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white">
-                              {conversation.unreadCount}
-                            </span>
-                          ) : null}
-                          {conversation.project?.isActive ? (
-                            <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                          ) : null}
-                        </div>
-                      </div>
-                      <p className="mt-1 truncate text-xs text-slate-500">
-                        {conversation.lastMessage?.content || "No message yet"}
-                      </p>
-                    </button>
-                  );
-                })
-              )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
             </div>
           )}
         </aside>

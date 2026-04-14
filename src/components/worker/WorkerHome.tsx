@@ -91,6 +91,10 @@ const WorkerHome = () => {
   );
   const availableBalance = Math.max(currentEarnings - totalWithdrawn, 0);
   const projectImage = project?.projectImage || worker?.profileImage || null;
+  const managerId =
+    (project?.manager?.id as string | undefined) ||
+    (project?.manager?.userId as string | undefined) ||
+    (project?.managerId as string | undefined);
   const hasCurrentProject = Boolean(
     project?.projectName || project?.address || projectImage,
   );
@@ -202,6 +206,15 @@ const WorkerHome = () => {
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               {hasCurrentProject ? "Active" : "Awaiting Assignment"}
             </div>
+
+            {managerId ? (
+              <Link
+                href={`/messages?tab=member&receiverId=${managerId}`}
+                className="inline-flex items-center justify-center rounded-xl border border-primary/30 bg-white px-4 py-2 text-sm font-semibold text-primary transition hover:bg-primary/5"
+              >
+                Message Manager
+              </Link>
+            ) : null}
           </div>
 
           <div className="overflow-hidden rounded-[24px] border border-stone-200 bg-stone-100 shadow-[0_10px_30px_rgba(15,23,42,0.08)] lg:justify-self-end lg:w-[340px]">
@@ -330,7 +343,10 @@ const WorkerHome = () => {
                 Recent payment entries for this assignment.
               </p>
             </div>
-            <Link href="/earnings" className="text-blue-500 hover:text-blue-700">
+            <Link
+              href="/earnings"
+              className="text-blue-500 hover:text-blue-700"
+            >
               View All
             </Link>
           </div>

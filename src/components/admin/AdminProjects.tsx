@@ -61,96 +61,118 @@ const AdminProjects = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projectList.map((project: any) => (
-              <div
-                key={project.id}
-                className="bg-white rounded-[12px] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-              >
-                {/* Project Image */}
-                <div className="relative h-80 w-full overflow-hidden bg-gray-200">
-                  <Image
-                    src={project.projectImage}
-                    alt={project.projectName}
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+            {projectList.map((project: any) =>
+              (() => {
+                const managerUserId =
+                  project?.manager?.id ||
+                  project?.managerId ||
+                  project?.manager?.userId;
 
-                {/* Project Content */}
-                <div className="p-5">
-                  {/* Header with Status */}
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 flex-1 pr-2">
-                      {project.projectName}
-                    </h3>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(project.status)}`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
-
-                  {/* Address */}
-                  <div className="flex items-start gap-2 mb-4">
-                    <MapPin
-                      size={18}
-                      className="text-gray-500 flex-shrink-0 mt-0.5"
-                    />
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {project.address}
-                    </p>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
-
-                  {/* Footer: Manager and Workers */}
-                  <div className="space-y-3">
-                    {/* Manager */}
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={
-                          project.manager.profileImage ||
-                          "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png"
-                        }
-                        alt=""
-                        height={16}
-                        width={16}
-                        className="h-8 w-8 rounded-full"
-                      ></Image>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500">Manager</p>
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {project.manager.userName}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Workers */}
-                    <div className="flex items-center gap-2">
-                      <Users
-                        size={18}
-                        className="text-gray-500 flex-shrink-0"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-600">
-                          {project._count.workerProfiles} Active Worker
-                          {project._count.workerProfiles !== 1 ? "s" : ""}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <Link
-                    href={`/projects/${project.id}`}
-                    className="block text-center w-full mt-4 px-4 py-2 bg-primary text-white rounded-[6px] font-medium text-sm hover:opacity-90 transition-opacity"
+                return (
+                  <div
+                    key={project.id}
+                    className="bg-white rounded-[12px] overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100"
                   >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            ))}
+                    {/* Project Image */}
+                    <div className="relative h-80 w-full overflow-hidden bg-gray-200">
+                      <Image
+                        src={project.projectImage}
+                        alt={project.projectName}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+
+                    {/* Project Content */}
+                    <div className="p-5">
+                      {/* Header with Status */}
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-lg font-semibold text-gray-900 flex-1 pr-2">
+                          {project.projectName}
+                        </h3>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(project.status)}`}
+                        >
+                          {project.status}
+                        </span>
+                      </div>
+
+                      {/* Address */}
+                      <div className="flex items-start gap-2 mb-4">
+                        <MapPin
+                          size={18}
+                          className="text-gray-500 flex-shrink-0 mt-0.5"
+                        />
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {project.address}
+                        </p>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-gray-200 my-4"></div>
+
+                      {/* Footer: Manager and Workers */}
+                      <div className="space-y-3">
+                        {/* Manager */}
+                        <div className="flex items-center gap-2">
+                          <Image
+                            src={
+                              project.manager.profileImage ||
+                              "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png"
+                            }
+                            alt=""
+                            height={16}
+                            width={16}
+                            className="h-8 w-8 rounded-full"
+                          ></Image>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-500">Manager</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {project.manager.userName}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Workers */}
+                        <div className="flex items-center gap-2">
+                          <Users
+                            size={18}
+                            className="text-gray-500 flex-shrink-0"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-600">
+                              {project._count.workerProfiles} Active Worker
+                              {project._count.workerProfiles !== 1 ? "s" : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <Link
+                          href={`/projects/${project.id}`}
+                          className="block text-center w-full px-4 py-2 bg-primary text-white rounded-[6px] font-medium text-sm hover:opacity-90 transition-opacity"
+                        >
+                          View Details
+                        </Link>
+                        {managerUserId ? (
+                          <Link
+                            href={`/messages?tab=member&receiverId=${managerUserId}&receiverName=${encodeURIComponent(project.manager.userName || "Manager")}`}
+                            className="block text-center w-full rounded-[6px] border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            Message Manager
+                          </Link>
+                        ) : (
+                          <span className="block text-center w-full rounded-[6px] border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-400">
+                            Message Manager
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })(),
+            )}
           </div>
         )}
       </div>

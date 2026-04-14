@@ -20,6 +20,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const formatCurrency = (value: number = 0) => `$${value.toLocaleString()}`;
@@ -158,6 +159,8 @@ const AllWorkers = () => {
             {workers.map((worker: any) => {
               const profile = worker.workerProfile;
               const projectName = profile?.project?.projectName || "Unassigned";
+              const workerUserId =
+                worker?.id || worker?.userId || profile?.workerId;
 
               return (
                 <article
@@ -246,6 +249,19 @@ const AllWorkers = () => {
                       </span>
                     </span>
                   </div>
+
+                  {workerUserId ? (
+                    <Link
+                      href={`/messages?tab=member&receiverId=${workerUserId}`}
+                      className="mt-3 inline-flex w-full items-center justify-center rounded-[10px] border border-primary/30 bg-white px-3 py-2 text-sm font-semibold text-primary transition hover:bg-primary/5"
+                    >
+                      Message Worker
+                    </Link>
+                  ) : (
+                    <span className="mt-3 inline-flex w-full items-center justify-center rounded-[10px] border border-slate-200 bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-400">
+                      Message Worker
+                    </span>
+                  )}
                 </article>
               );
             })}
