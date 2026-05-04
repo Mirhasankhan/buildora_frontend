@@ -7,6 +7,7 @@ import { JWTDecode } from "@/utils/jwt";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type AppRole = "ADMIN" | "SITE_MANAGER" | "WORKER";
 
@@ -52,8 +53,13 @@ const Header = () => {
     : [{ label: "Overview", href: "/" }];
 
   const profileImage = data?.result?.profileImage as string | undefined;
+  useEffect(() => {
+    if (!role) {
+      router.push("/auth/login");
+    }
+  }, [role, router]);
 
-  if(!role) return router.push("/auth/login");;
+  if (!role) return null;
 
   return (
     <div className="border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur-md">
