@@ -135,7 +135,7 @@ const ProfilePage = () => {
       }),
     );
     Cookies.remove("token");
-    router.push("/");
+    router.push("/auth/login");
   };
 
   return (

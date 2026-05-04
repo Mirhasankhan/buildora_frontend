@@ -6,7 +6,7 @@ import { useProfileQuery } from "@/redux/features/auth/authApi";
 import { JWTDecode } from "@/utils/jwt";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 type AppRole = "ADMIN" | "SITE_MANAGER" | "WORKER";
 
@@ -44,6 +44,7 @@ const Header = () => {
   const pathname = usePathname();
   const { decoded } = JWTDecode();
   const { data } = useProfileQuery("");
+  const router = useRouter();
 
   const role = decoded?.role as AppRole | undefined;
   const navItems = role
@@ -51,6 +52,8 @@ const Header = () => {
     : [{ label: "Overview", href: "/" }];
 
   const profileImage = data?.result?.profileImage as string | undefined;
+
+  if(!role) return router.push("/auth/login");;
 
   return (
     <div className="border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur-md">
