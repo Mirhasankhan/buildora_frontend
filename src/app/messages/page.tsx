@@ -66,8 +66,8 @@ const getInitials = (value?: string | null) => {
   return text.charAt(0).toUpperCase();
 };
 
-const WS_URL = "ws://72.60.10.234:6800";
-// const WS_URL = "ws://localhost:6800";
+// const WS_URL = "ws://72.60.10.234:6800";
+const WS_URL = "ws://localhost:6800";
 
 const resolveWsUrl = () => {
   const fromEnv = process.env.NEXT_PUBLIC_SOCKET_URL?.trim();
@@ -547,7 +547,7 @@ const MessagePage = () => {
                 onClick={() => setActiveTab("member")}
                 className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                   activeTab === "member"
-                    ? "bg-slate-900 text-white shadow"
+                    ? "bg-primary text-white shadow"
                     : "text-slate-500 hover:bg-slate-100"
                 }`}
               >
@@ -561,7 +561,7 @@ const MessagePage = () => {
                 onClick={() => setActiveTab("group")}
                 className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                   activeTab === "group"
-                    ? "bg-slate-900 text-white shadow"
+                    ? "bg-primary text-white shadow"
                     : "text-slate-500 hover:bg-slate-100"
                 }`}
               >
@@ -775,7 +775,7 @@ const MessagePage = () => {
                 ? activeMember?.partner?.userName ||
                   "Select a member conversation"
                 : activeProject?.project?.projectName ||
-                  "Select a project group"}
+                  "Select a project"}
             </h2>
           </div>
 
