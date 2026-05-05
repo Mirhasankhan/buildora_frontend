@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/Providers/ThemeProvider";
@@ -15,9 +15,13 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://buildora-frontend-xi.vercel.app"),
   title: "Buildora - Construction Workforce Management Platform",
   description:
     "Connect skilled construction workers with project managers. Streamline hiring, manage teams, and scale your construction projects efficiently with Buildora.",
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "construction",
     "workforce management",
@@ -30,14 +34,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://buildora-frontend-xi.vercel.app",
+    url: "/",
     title: "Buildora - Construction Workforce Management Platform",
     description:
       "Connect skilled construction workers with project managers. Streamline hiring, manage teams, and scale your construction projects efficiently.",
     siteName: "Buildora",
     images: [
       {
-        url: "https://api.zenexcloud.com/emdadullah/uploads/projects/profileImage/1777956435205-7jmrdclhbdh.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Buildora - Construction Workforce Management",
@@ -50,9 +54,7 @@ export const metadata: Metadata = {
     title: "Buildora - Construction Workforce Management Platform",
     description:
       "Connect skilled construction workers with project managers. Streamline hiring, manage teams, and scale your construction projects efficiently.",
-    images: [
-      "https://api.zenexcloud.com/emdadullah/uploads/projects/profileImage/1777956435205-7jmrdclhbdh.jpg",
-    ],
+    images: ["/og-image.jpg"],
     creator: "@buildora",
   },
   robots: {
@@ -66,7 +68,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
