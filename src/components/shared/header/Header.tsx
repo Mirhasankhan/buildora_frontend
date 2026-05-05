@@ -1,6 +1,6 @@
 "use client";
 
-import logo from "@/assets/banner.jpg";
+import logo from "@/assets/logo.buil.jpg";
 import Container from "@/utils/Container";
 import { useProfileQuery } from "@/redux/features/auth/authApi";
 import { JWTDecode } from "@/utils/jwt";
@@ -62,20 +62,18 @@ const Header = () => {
   if (!role) return null;
 
   return (
-    <div className="border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur-md">
+    <div className="border-b border-stone-200 bg-white/90 px-4 py-1 backdrop-blur-md">
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image
-              className="h-9 w-9 rounded-full object-cover"
+              className="h-24 w-24 rounded-full object-cover"
               src={logo}
               alt="Logo"
-              height={40}
-              width={40}
+              height={70}
+              width={70}
             />
-            <h1 className="text-lg font-semibold tracking-tight text-stone-800">
-              abiola
-            </h1>
+           
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -98,7 +96,7 @@ const Header = () => {
 
             {role && (
               <Link href="/profile" className="ml-1" aria-label="Go to profile">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full border border-stone-200 bg-stone-100 ring-2 ring-transparent transition hover:ring-orange-200">
+                <div className="relative h-12 w-12 overflow-hidden rounded-full border border-stone-200 bg-stone-100 ring-2 ring-transparent transition hover:ring-orange-200">
                   {profileImage ? (
                     <Image
                       src={profileImage}
