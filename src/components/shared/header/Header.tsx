@@ -85,7 +85,7 @@ const Header = () => {
                   href={item.href}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                     active
-                      ? "bg-orange-500 text-white shadow-[0_8px_20px_rgba(249,115,22,0.35)]"
+                      ? "bg-primary text-white"
                       : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
                   }`}
                 >
