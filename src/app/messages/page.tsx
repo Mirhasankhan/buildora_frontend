@@ -66,8 +66,8 @@ const getInitials = (value?: string | null) => {
   return text.charAt(0).toUpperCase();
 };
 
-// const WS_URL = "ws://72.60.10.234:6800";
-const WS_URL = "ws://localhost:6800";
+const WS_URL = "ws://72.60.10.234:6800";
+// const WS_URL = "ws://localhost:6800";
 
 const resolveWsUrl = () => {
   const fromEnv = process.env.NEXT_PUBLIC_SOCKET_URL?.trim();

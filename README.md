@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Buildora Frontend
+
+Buildora is a role-based construction workforce management platform built with Next.js 15. The app serves three primary user types: administrators, site managers, and workers. After authentication, the home page switches to the correct dashboard based on the role stored in the JWT cookie.
+
+## What the app does
+
+Buildora focuses on the day-to-day operations around construction teams and projects:
+
+- authentication and account recovery
+- invite-based registration and OTP verification
+- role-aware dashboards for admins, site managers, and workers
+- project creation, assignment, and detail views
+- worker discovery and management
+- earnings and withdrawal tracking
+- profile management
+- live messaging with WebSocket support
+
+## Tech Stack
+
+- Next.js 15 App Router
+- React 19
+- TypeScript
+- Redux Toolkit + RTK Query
+- redux-persist for persisted auth state
+- Tailwind CSS
+- Radix UI components
+- NextAuth for social login
+- react-toastify for notifications
+- WebSocket-based messaging
+
+## Project Structure
+
+- `src/app` contains the App Router pages, including auth screens, dashboards, project pages, earnings, withdraws, workers, profile, and messages.
+- `src/components` contains the feature UI for admin, manager, worker, shared layout pieces, auth flows, and reusable UI components.
+- `src/redux` contains the store, auth slice, RTK Query base API, and feature endpoints for auth, projects, payments, and withdrawals.
+- `src/utils` contains helpers for JWT decoding, sidebar generation, overlap checks, and NextAuth configuration.
+
+## Main Routes
+
+- `/` role-based dashboard landing page
+- `/auth/login`
+- `/auth/register`
+- `/auth/verify-email`
+- `/auth/reset-password`
+- `/auth/set-profile`
+- `/projects`
+- `/projects/[project]`
+- `/create-project`
+- `/workers`
+- `/earnings`
+- `/withdraws`
+- `/profile`
+- `/messages`
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` starts the app with Turbopack.
+- `npm run build` creates a production build.
+- `npm run start` starts the production server on port `7012`.
+- `npm run lint` runs the Next.js lint command.
+
+## Environment Setup
+
+The app currently uses a few external services and expects these values to be available in the environment when relevant:
+
+```bash
+GITHUB_ID=
+GITHUB_SECRET=
+GOOGLE_ID=
+GOOGLE_SECRET=
+NEXTAUTH_SECRET=
+NEXT_PUBLIC_SOCKET_URL=
+```
+
+Notes:
+
+- Social login is configured in `src/utils/authOptions.ts`.
+- Live messaging uses `NEXT_PUBLIC_SOCKET_URL` when it is available.
+- The REST API base URL is configured in `src/redux/api/baseApi.ts`.
+
+## UI and State
+
+The app shell is wrapped with theme, Redux, and toast providers. Auth state is persisted in local storage through `redux-persist`, while most server data is handled through RTK Query endpoints.
+
+## Branding
+
+The app metadata, favicon, and Open Graph values are already configured in `src/app/layout.tsx` for the Buildora brand.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Redux Toolkit Documentation](https://redux-toolkit.js.org/)
+- [NextAuth Documentation](https://next-auth.js.org/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app is ready for standard Next.js deployment targets such as Vercel or any Node.js host that can run `next build` and `next start`.
