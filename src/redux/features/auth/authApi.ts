@@ -30,6 +30,7 @@ const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["users"],
     }),
 
     profile: builder.query({
@@ -37,7 +38,7 @@ const authApi = baseApi.injectEndpoints({
         url: "/users/profile",
         method: "GET",
       }),
-      providesTags: ["users",],
+      providesTags: ["users"],
     }),
     sendOtp: builder.mutation({
       query: (email) => ({
@@ -103,7 +104,7 @@ const authApi = baseApi.injectEndpoints({
     }),
 
     allWorkers: builder.query({
-      query: ({page,search,workerCategory}) => ({
+      query: ({ page, search, workerCategory }) => ({
         url: `/users/all-workers?page=${page}&search=${search}&workerCategory=${workerCategory}`,
         method: "GET",
       }),
@@ -135,5 +136,4 @@ export const {
   useSiteManagersQuery,
   useChangePasswordMutation,
   useVerifyEmailMutation,
-  
 } = authApi;

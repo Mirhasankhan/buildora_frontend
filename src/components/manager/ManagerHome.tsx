@@ -8,6 +8,7 @@ import {
   BriefcaseBusiness,
   CalendarClock,
   CheckCircle2,
+  Ellipsis,
   MessageSquareMore,
   Users,
 } from "lucide-react";
@@ -147,7 +148,11 @@ const ManagerHome = () => {
                 Total Projects
               </p>
               <p className="mt-2 text-3xl font-semibold text-slate-900">
-                {isLoading ? "--" : totalProjects}
+                {isLoading ? (
+                  <Ellipsis className="h-6 w-6 animate-ping text-slate-400" />
+                ) : (
+                  totalProjects
+                )}
               </p>
             </div>
 
@@ -156,7 +161,11 @@ const ManagerHome = () => {
                 Ongoing
               </p>
               <p className="mt-2 text-3xl font-semibold text-slate-900">
-                {isLoading ? "--" : ongoingProjects}
+                {isLoading ? (
+                  <Ellipsis className="h-6 w-6 animate-ping text-slate-400" />
+                ) : (
+                  ongoingProjects
+                )}
               </p>
             </div>
 
@@ -165,7 +174,11 @@ const ManagerHome = () => {
                 Completed
               </p>
               <p className="mt-2 text-3xl font-semibold text-slate-900">
-                {isLoading ? "--" : completedProjects}
+                {isLoading ? (
+                  <Ellipsis className="h-6 w-6 animate-ping text-slate-400" />
+                ) : (
+                  completedProjects
+                )}
               </p>
             </div>
 
@@ -174,7 +187,11 @@ const ManagerHome = () => {
                 Workers Across Sites
               </p>
               <p className="mt-2 text-3xl font-semibold text-slate-900">
-                {isLoading ? "--" : totalWorkers}
+                {isLoading ? (
+                  <Ellipsis className="h-6 w-6 animate-ping text-slate-400" />
+                ) : (
+                  totalWorkers
+                )}
               </p>
             </div>
           </div>
@@ -192,7 +209,11 @@ const ManagerHome = () => {
                 </h2>
               </div>
               <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
-                {isLoading ? "--" : `${projectsWithPaymentDue} need action`}
+                {isLoading ? (
+                  <Ellipsis className="h-4 w-4 animate-ping text-slate-500" />
+                ) : (
+                  `${projectsWithPaymentDue} need action`
+                )}
               </div>
             </div>
 

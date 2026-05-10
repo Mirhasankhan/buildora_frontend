@@ -11,6 +11,7 @@ import {
   Building2,
   CheckCircle2,
   Clock3,
+  Ellipsis,
   Users,
   Wallet,
 } from "lucide-react";
@@ -122,9 +123,11 @@ const AdminHome = () => {
                             {stat.label}
                           </p>
                           <p className="mt-2 text-3xl font-semibold text-slate-900">
-                            {projectsLoading || workersLoading
-                              ? "--"
-                              : stat.value}
+                            {projectsLoading || workersLoading ? (
+                              <Ellipsis className="h-6 w-6 animate-ping text-slate-400" />
+                            ) : (
+                              stat.value
+                            )}
                           </p>
                         </div>
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">

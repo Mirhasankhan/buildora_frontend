@@ -12,6 +12,7 @@ import {
   ReceiptText,
   UserRound,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useProfileQuery } from "@/redux/features/auth/authApi";
 import Link from "next/link";
 
@@ -118,8 +119,70 @@ const WorkerHome = () => {
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex min-h-[50vh] max-w-6xl items-center justify-center px-4 py-8 text-stone-500">
-        Loading worker dashboard...
+      <div className="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:space-y-6 sm:py-8">
+        <section className="relative overflow-hidden rounded-[28px] border border-orange-100 bg-white p-5 shadow-[0_10px_30px_rgba(120,81,28,0.08)] sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
+            <div className="space-y-4">
+              <Skeleton className="h-4 w-40 rounded-full bg-stone-200" />
+              <div className="space-y-3">
+                <Skeleton className="h-8 w-3/4 rounded-full bg-stone-200" />
+                <Skeleton className="h-4 w-full rounded-full bg-stone-200" />
+                <Skeleton className="h-4 w-5/6 rounded-full bg-stone-200" />
+              </div>
+              <Skeleton className="h-9 w-40 rounded-xl bg-stone-200" />
+            </div>
+
+            <Skeleton className="h-[260px] w-full rounded-[24px] bg-stone-200 lg:justify-self-end lg:w-[340px]" />
+          </div>
+
+          <div className="relative mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={`summary-skeleton-${index}`}
+                className="rounded-2xl border border-stone-200 bg-stone-50/80 p-4"
+              >
+                <Skeleton className="mb-3 h-3 w-24 rounded-full bg-stone-200" />
+                <Skeleton className="h-6 w-28 rounded-full bg-stone-200" />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-4 sm:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={`metric-skeleton-${index}`}
+              className="rounded-[24px] border border-stone-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+            >
+              <Skeleton className="mb-3 h-11 w-11 rounded-2xl bg-stone-200" />
+              <Skeleton className="h-8 w-24 rounded-full bg-stone-200" />
+              <Skeleton className="mt-2 h-4 w-20 rounded-full bg-stone-200" />
+              <Skeleton className="mt-2 h-3 w-28 rounded-full bg-stone-200" />
+            </div>
+          ))}
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={`list-skeleton-${index}`}
+              className="overflow-hidden rounded-[28px] border border-stone-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+            >
+              <div className="border-b border-stone-200 px-5 py-4 sm:px-6">
+                <Skeleton className="h-6 w-40 rounded-full bg-stone-200" />
+                <Skeleton className="mt-2 h-4 w-56 rounded-full bg-stone-200" />
+              </div>
+              <div className="space-y-3 p-5 sm:p-6">
+                {Array.from({ length: 3 }).map((__, rowIndex) => (
+                  <Skeleton
+                    key={`row-skeleton-${index}-${rowIndex}`}
+                    className="h-16 w-full rounded-2xl bg-stone-200"
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
       </div>
     );
   }

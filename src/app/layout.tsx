@@ -3,8 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/Providers/ThemeProvider";
 import Providers from "@/lib/providers/Providers";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 import Header from "@/components/shared/header/Header";
 
 const roboto = Roboto({
@@ -94,7 +93,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Providers>
-            <ToastContainer position="top-right" autoClose={3000} />
+            
+            <Toaster />
             <div className="min-h-[100vh] bg-[#f8f8f8]">
               <Header></Header>
               <div>{children}</div>

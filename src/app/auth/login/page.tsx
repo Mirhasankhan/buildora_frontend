@@ -38,7 +38,8 @@ export default function Login() {
 
     try {
       const response = await loginUser(payload).unwrap();
-      console.log(response?.result?.role);
+     
+    
       toast.success("Loggedin Successfully");
       dispatch(
         setUser({
@@ -52,7 +53,7 @@ export default function Login() {
       router.push("/");
       reset();
     } catch (error: any) {
-      console.log(error);
+
       toast.error(error.data.message);
     }
   };

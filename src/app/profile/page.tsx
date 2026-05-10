@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { Camera, LogOut } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useProfileQuery,
   useUpdateImageMutation,
@@ -165,7 +166,27 @@ const ProfilePage = () => {
 
         <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
           {isLoading ? (
-            <p className="text-stone-500">Loading profile...</p>
+            <div className="space-y-5">
+              <div className="pb-2">
+                <Skeleton className="mx-auto h-36 w-36 rounded-full bg-stone-100" />
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Skeleton className="mb-2 h-4 w-16 bg-stone-100" />
+                  <Skeleton className="h-11 w-full rounded-[6px] bg-stone-100" />
+                </div>
+
+                <div>
+                  <Skeleton className="mb-2 h-4 w-16 bg-stone-100" />
+                  <Skeleton className="h-11 w-full rounded-[6px] bg-stone-100" />
+                </div>
+
+                <Skeleton className="h-11 w-full rounded-[6px] bg-stone-100" />
+                <Skeleton className="h-11 w-full rounded-[6px] bg-stone-100" />
+                <Skeleton className="h-11 w-full rounded-[6px] bg-stone-100" />
+              </div>
+            </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="pb-2">

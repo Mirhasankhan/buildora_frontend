@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 type AppRole = "ADMIN" | "SITE_MANAGER" | "WORKER";
 
@@ -43,8 +44,10 @@ const isRouteActive = (pathname: string, href: string) => {
 
 const Header = () => {
   const pathname = usePathname();
-  const { decoded } = JWTDecode();
-  const { data } = useProfileQuery("");
+  const { decoded, token } = JWTDecode();
+  const { data } = useProfileQuery(token ?? skipToken, {
+    refetchOnMountOrArgChange: true,
+  });
   const router = useRouter();
 
   const role = decoded?.role as AppRole | undefined;
@@ -73,7 +76,6 @@ const Header = () => {
               height={70}
               width={70}
             />
-           
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
