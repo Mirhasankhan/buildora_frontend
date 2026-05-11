@@ -38,8 +38,7 @@ export default function Login() {
 
     try {
       const response = await loginUser(payload).unwrap();
-     
-    
+
       toast.success("Loggedin Successfully");
       dispatch(
         setUser({
@@ -53,13 +52,48 @@ export default function Login() {
       router.push("/");
       reset();
     } catch (error: any) {
-
       toast.error(error.data.message);
     }
   };
 
   return (
-    <div className="min-h-screen flex mx-2 items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col mx-2 items-center justify-center bg-gray-100 gap-6">
+      {/* Demo Credentials Section */}
+      <div className="w-full max-w-md bg-blue-50 border-l-4 border-blue-500 p-4 rounded-[6px] shadow-sm">
+        <h3 className="text-lg font-semibold text-blue-900 mb-3">
+          Demo Accounts
+        </h3>
+        <div className="space-y-2 text-sm">
+          <div>
+            <p className="font-medium text-blue-800">Admin Account:</p>
+            <p className="text-gray-700">
+              Email: <span className="font-mono">mirhasan000034@gmail.com</span>
+            </p>
+            <p className="text-gray-700">
+              Password: <span className="font-mono">123456</span>
+            </p>
+          </div>
+          <div className="pt-2 border-t border-blue-200">
+            <p className="font-medium text-blue-800">Manager Account:</p>
+            <p className="text-gray-700">
+              Email: <span className="font-mono">mirhasasn.bd1@gmail.com</span>
+            </p>
+            <p className="text-gray-700">
+              Password: <span className="font-mono">123456</span>
+            </p>
+          </div>
+          <div className="pt-2 border-t border-blue-200">
+            <p className="font-medium text-blue-800">Worker Account:</p>
+            <p className="text-gray-700">
+              Email: <span className="font-mono">teyoxix325@newtrea.com</span>
+            </p>
+            <p className="text-gray-700">
+              Password: <span className="font-mono">123456</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-8 rounded-[6px] shadow-md w-full max-w-md"
