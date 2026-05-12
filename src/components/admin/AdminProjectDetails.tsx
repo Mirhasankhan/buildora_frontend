@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/utils/Container";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,6 +62,70 @@ const formatDate = (date: string) => {
   });
 };
 
+const ProjectDetailsSkeleton = () => {
+  return (
+    <Container className="py-8 md:py-10">
+      <div className="space-y-6 rounded-[20px] bg-gradient-to-b from-slate-50/70 via-white to-white p-3 sm:p-4 md:p-5">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-8 w-64" />
+          </div>
+          <Skeleton className="h-7 w-24 rounded-full" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <section className="lg:col-span-2 bg-white rounded-[16px] border border-slate-200/80 overflow-hidden">
+            <Skeleton className="h-56 sm:h-72 md:h-80 w-full rounded-none" />
+            <div className="p-4 sm:p-6 space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Skeleton className="h-14 w-full rounded-[10px]" />
+                <Skeleton className="h-14 w-full rounded-[10px]" />
+                <Skeleton className="h-14 w-full rounded-[10px]" />
+                <Skeleton className="h-14 w-full rounded-[10px]" />
+              </div>
+              <div className="rounded-[12px] border border-slate-200 bg-white p-4 sm:p-5 space-y-3">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-[95%]" />
+                <Skeleton className="h-4 w-[90%]" />
+                <Skeleton className="h-4 w-[82%]" />
+              </div>
+            </div>
+          </section>
+
+          <aside className="space-y-6">
+            <div className="bg-white rounded-[16px] border border-slate-200/80 p-5 space-y-4">
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-16 w-full rounded-[12px]" />
+              <Skeleton className="h-10 w-full rounded-[10px]" />
+              <Skeleton className="h-10 w-full rounded-[10px]" />
+              <Skeleton className="h-11 w-full rounded-[10px]" />
+            </div>
+
+            <div className="bg-white rounded-[16px] border border-slate-200/80 p-5 space-y-3">
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-16 w-full rounded-[10px]" />
+              <Skeleton className="h-16 w-full rounded-[10px]" />
+              <Skeleton className="h-16 w-full rounded-[10px]" />
+            </div>
+          </aside>
+        </div>
+
+        <section className="bg-white rounded-[16px] border border-slate-200/80 p-4 sm:p-6">
+          <div className="mb-4">
+            <Skeleton className="h-6 w-36" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="h-16 w-full rounded-[10px]" />
+            ))}
+          </div>
+        </section>
+      </div>
+    </Container>
+  );
+};
+
 const AdminProjectDetails = () => {
   const params = useParams<{ project: string | string[] }>();
   const rawProjectId = params?.project;
@@ -71,9 +136,12 @@ const AdminProjectDetails = () => {
   const [selectedManagerId, setSelectedManagerId] = useState("");
   const [isReplacing, setIsReplacing] = useState(false);
 
-  const { data, isLoading, isError } = useProjectDetailsQuery(projectId, {
-    skip: !projectId,
-  });
+  const { data, isLoading, isFetching, isError } = useProjectDetailsQuery(
+    projectId,
+    {
+      skip: !projectId,
+    },
+  );
 
   const { data: managersData } = useSiteManagersQuery({});
   const [replaceManager] = useReplaceManagerMutation();
@@ -135,18 +203,7 @@ const AdminProjectDetails = () => {
     );
   }
 
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-            <p className="mt-4 text-gray-600">Loading project details...</p>
-          </div>
-        </div>
-      </Container>
-    );
-  }
+  if (isLoading || isFetching) return <ProjectDetailsSkeleton />;
 
   if (isError || !project) {
     return (

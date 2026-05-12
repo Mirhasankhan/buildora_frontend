@@ -1,4 +1,5 @@
 "use client";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAllProjectsQuery } from "@/redux/features/project/project.api";
 import Container from "@/utils/Container";
 import React from "react";
@@ -6,8 +7,40 @@ import Image from "next/image";
 import { MapPin, Users, Briefcase } from "lucide-react";
 import Link from "next/link";
 
+const ProjectCardSkeleton = () => {
+  return (
+    <div className="bg-white rounded-[12px] overflow-hidden shadow-sm border border-gray-100">
+      <Skeleton className="h-80 w-full rounded-none" />
+
+      <div className="p-5">
+        <div className="mb-3 flex items-start justify-between gap-2">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+        </div>
+
+        <div className="mb-4">
+          <Skeleton className="h-4 w-[90%]" />
+          <Skeleton className="mt-2 h-4 w-[72%]" />
+        </div>
+
+        <div className="border-t border-gray-200 my-4"></div>
+
+        <div className="space-y-3">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-8 w-[75%]" />
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Skeleton className="h-10 w-full rounded-[6px]" />
+          <Skeleton className="h-10 w-full rounded-[6px]" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AdminProjects = () => {
-  const { data: projects, isLoading } = useAllProjectsQuery("");
+  const { data: projects, isLoading, isFetching } = useAllProjectsQuery("");
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -22,20 +55,8 @@ const AdminProjects = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <p className="mt-4 text-gray-600">Loading projects...</p>
-          </div>
-        </div>
-      </Container>
-    );
-  }
-
   const projectList = projects?.result || [];
+  const shouldShowSkeleton = isLoading || isFetching;
 
   return (
     <Container>
@@ -54,7 +75,13 @@ const AdminProjects = () => {
           </Link>
         </div>
 
-        {projectList.length === 0 ? (
+        {shouldShowSkeleton ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ProjectCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : projectList.length === 0 ? (
           <div className="text-center py-12">
             <Briefcase size={48} className="mx-auto text-gray-400 mb-4" />
             <p className="text-gray-600 text-lg">No projects found</p>

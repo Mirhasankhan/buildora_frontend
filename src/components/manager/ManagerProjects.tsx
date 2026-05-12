@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/utils/Container";
 import { useManagerProjectsQuery } from "@/redux/features/project/project.api";
 import Image from "next/image";
@@ -61,22 +62,42 @@ const getRemainingPaymentDays = (lastPayDate: string) => {
   return Math.max(diff, 0);
 };
 
-const ManagerProjects = () => {
-  const { data, isLoading, isError } = useManagerProjectsQuery("");
-  const projects = data?.result || [];
+const ProjectCardSkeleton = () => {
+  return (
+    <article className="rounded-[14px] border border-gray-200 bg-white shadow-sm overflow-hidden">
+      <Skeleton className="h-52 w-full rounded-none" />
 
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            <p className="mt-3 text-sm text-gray-600">Loading projects...</p>
-          </div>
+      <div className="p-5">
+        <Skeleton className="h-6 w-40" />
+
+        <div className="mt-3 space-y-2">
+          <Skeleton className="h-4 w-[85%]" />
+          <Skeleton className="h-4 w-[70%]" />
+          <Skeleton className="h-4 w-[55%]" />
         </div>
-      </Container>
-    );
-  }
+
+        <div className="my-4 border-t border-gray-200"></div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-16 w-full rounded-[10px]" />
+          <Skeleton className="h-16 w-full rounded-[10px]" />
+        </div>
+
+        <Skeleton className="mt-3 h-12 w-full rounded-[10px]" />
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Skeleton className="h-10 w-full rounded-[8px]" />
+          <Skeleton className="h-10 w-full rounded-[8px]" />
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const ManagerProjects = () => {
+  const { data, isLoading, isFetching, isError } = useManagerProjectsQuery("");
+  const projects = data?.result || [];
+  const shouldShowSkeleton = isLoading || isFetching;
 
   if (isError) {
     return (
@@ -103,7 +124,13 @@ const ManagerProjects = () => {
           </p>
         </div>
 
-        {projects.length === 0 ? (
+        {shouldShowSkeleton ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ProjectCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
           <div className="rounded-[12px] border border-dashed border-gray-300 py-16 text-center text-gray-600">
             No projects found.
           </div>
