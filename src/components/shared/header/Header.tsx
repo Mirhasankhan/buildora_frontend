@@ -50,10 +50,16 @@ const Header = () => {
   });
   const router = useRouter();
 
-  const role = decoded?.role as AppRole | undefined;
-  const navItems = role
-    ? roleNavItems[role]
-    : [{ label: "Overview", href: "/" }];
+  // Validate that role is one of the expected values
+  const isValidRole = (r: any): r is AppRole => {
+    return ["ADMIN", "SITE_MANAGER", "WORKER"].includes(r);
+  };
+
+  const role = isValidRole(decoded?.role) ? decoded.role : undefined;
+  const navItems =
+    role && roleNavItems[role]
+      ? roleNavItems[role]
+      : [{ label: "Overview", href: "/" }];
 
   const profileImage = data?.result?.profileImage as string | undefined;
   useEffect(() => {
