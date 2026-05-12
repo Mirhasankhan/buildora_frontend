@@ -6,14 +6,8 @@ import {
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/components/ui/dialog";
+import { toast } from "sonner";
+
 
 const VerifyEmail = () => {
   const [verifyOtp, { isLoading }] = useVerifyEmailMutation();
@@ -67,13 +61,7 @@ const VerifyEmail = () => {
     if (response.data) {
       toast.success(response.data.message);
       router.push("/auth/login");
-      localStorage.removeItem("verify");
-      // if (response.data.data?.accountLink) {
-      //   setStripeLink(response.data.data.accountLink);
-      //   setOpenModal(true);
-      // } else {
-      //   router.push("/auth/login");
-      // }
+      localStorage.removeItem("verify");     
     } else {
       toast.error(response.error.data.message);
     }

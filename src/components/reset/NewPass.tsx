@@ -3,12 +3,11 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { ArrowLeft, Lock } from "lucide-react";
-
 import { useRouter } from "next/navigation";
 import { TLoginValues } from "@/types/common";
-import { toast } from "react-toastify";
 import { useResetPasswordMutation } from "@/redux/features/auth/authApi";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const NewPass = () => {
   const [isLoading, setIsLoading] = useState(false);

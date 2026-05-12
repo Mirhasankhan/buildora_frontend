@@ -22,7 +22,8 @@ import {
 import { CheckCircle2, Plus, Sparkles, Users } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 type AddWorkerProps = {
   projectId: string;

@@ -2,9 +2,11 @@
 import { useSiteManagersQuery } from "@/redux/features/auth/authApi";
 import { useCreateProjectMutation } from "@/redux/features/project/project.api";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 type ProjectFormData = {
   projectName: string;
@@ -25,6 +27,7 @@ type ProjectFormData = {
 
 const CreateProjectForm = () => {
   const [createProject, { isLoading }] = useCreateProjectMutation();
+  const router = useRouter();
   const { data: siteManagers } = useSiteManagersQuery("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const {
@@ -75,6 +78,7 @@ const CreateProjectForm = () => {
     try {
       const response = await createProject(formData).unwrap();
       toast.success(response.message || "Project created successfully");
+      router.push("/projects")
       reset();
     } catch (error: any) {
       toast.error(error.data?.message || "Failed to create project");

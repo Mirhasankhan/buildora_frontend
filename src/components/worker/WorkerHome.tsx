@@ -73,6 +73,8 @@ const getStatusStyles = (status?: string) => {
 const WorkerHome = () => {
   const { data, isLoading, error } = useProfileQuery("");
 
+  console.log(data);
+
   const worker = data?.result;
   const profile = worker?.workerProfile ?? {};
   const project = profile.project ?? {};

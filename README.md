@@ -25,7 +25,7 @@ Buildora focuses on the day-to-day operations around construction teams and proj
 - Tailwind CSS
 - Radix UI components
 - NextAuth for social login
-- react-toastify for notifications
+- sonner for notifications
 - WebSocket-based messaging
 
 ## Project Structure

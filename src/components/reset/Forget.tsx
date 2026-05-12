@@ -1,10 +1,10 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ArrowLeft, LoaderCircle, Mail } from "lucide-react";
-import { toast } from "react-toastify";
 import Link from "next/link";
 import { TLoginValues } from "@/types/common";
 import { useSendOtpMutation } from "@/redux/features/auth/authApi";
+import { toast } from "sonner";
 
 const ForgetPassword = ({
   setActive,

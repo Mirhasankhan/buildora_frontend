@@ -2,7 +2,6 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import Image from "next/image";
 import { Camera, LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +15,7 @@ import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type AppRole = "ADMIN" | "SITE_MANAGER" | "WORKER";
 

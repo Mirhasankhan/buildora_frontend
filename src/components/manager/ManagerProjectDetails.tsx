@@ -24,7 +24,8 @@ import {
   useDailyPaymentMutation,
   useNonPaidDaysQuery,
 } from "@/redux/features/payment/payment.api";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 const fallbackAvatar =
   "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png";

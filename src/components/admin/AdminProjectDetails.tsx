@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
+
 import {
   BadgeDollarSign,
   Calendar,
@@ -27,6 +27,7 @@ import {
   Wrench,
   RefreshCw,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const fallbackAvatar =
   "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png";

@@ -2,7 +2,8 @@
 import { useVerifyOtpMutation } from "@/redux/features/auth/authApi";
 import { KeySquare } from "lucide-react";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 const VerifyOtp = ({ setActive }: { setActive: (value: string) => void }) => {
   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();

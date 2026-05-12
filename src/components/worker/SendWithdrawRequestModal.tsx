@@ -12,7 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSendWithdrawRequestMutation } from "@/redux/features/withdraw/withdraw.api";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 const SendWithdrawRequestModal = () => {
   const [open, setOpen] = useState(false);

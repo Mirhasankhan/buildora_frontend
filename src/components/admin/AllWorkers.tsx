@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAllWorkersQuery } from "@/redux/features/auth/authApi";
 import Container from "@/utils/Container";
 import {
@@ -53,30 +54,52 @@ const workerCategoryOptions = [
 
 const formatWorkerCategory = (value: string) => value.replaceAll("_", " ");
 
+const WorkerCardSkeleton = () => {
+  return (
+    <article className="rounded-[14px] border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Skeleton className="h-[52px] w-[52px] rounded-full" />
+          <div className="min-w-0 space-y-2">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+        </div>
+        <Skeleton className="h-6 w-24 rounded-full" />
+      </div>
+
+      <div className="space-y-3">
+        <Skeleton className="h-4 w-[85%]" />
+        <Skeleton className="h-4 w-[70%]" />
+        <Skeleton className="h-4 w-[78%]" />
+        <Skeleton className="h-4 w-[92%]" />
+      </div>
+
+      <div className="my-4 border-t border-gray-200" />
+
+      <div className="grid grid-cols-2 gap-3">
+        <Skeleton className="h-16 w-full rounded-[10px]" />
+        <Skeleton className="h-16 w-full rounded-[10px]" />
+      </div>
+
+      <Skeleton className="mt-3 h-12 w-full rounded-[10px]" />
+      <Skeleton className="mt-3 h-10 w-full rounded-[10px]" />
+    </article>
+  );
+};
+
 const AllWorkers = () => {
   const [search, setSearch] = useState("");
   const [workerCategory, setWorkerCategory] = useState("all");
 
-  const { data, isLoading, isError } = useAllWorkersQuery({
+  const { data, isLoading, isFetching, isError } = useAllWorkersQuery({
     page: 1,
     search,
     workerCategory: workerCategory === "all" ? "" : workerCategory,
   });
 
   const workers = data?.result?.workers || [];
-
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            <p className="mt-3 text-sm text-gray-600">Loading workers...</p>
-          </div>
-        </div>
-      </Container>
-    );
-  }
+  const shouldShowSkeleton = isLoading || isFetching;
 
   if (isError) {
     return (
@@ -150,7 +173,13 @@ const AllWorkers = () => {
           </div>
         </div>
 
-        {workers.length < 1 ? (
+        {shouldShowSkeleton ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <WorkerCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : workers.length < 1 ? (
           <div className="rounded-[12px] border border-dashed border-gray-300 py-16 text-center text-gray-600">
             No workers found.
           </div>
