@@ -17,7 +17,27 @@ const withdrawApi = baseApi.injectEndpoints({
       }),
       providesTags: ["payment", "withdraw"],
     }),
+    allRequests: builder.query({
+      query: (status) => ({
+        url: `/withdraw/all-requests?status=${status}`,
+        method: "GET",
+      }),
+      providesTags: ["payment", "withdraw"],
+    }),
+    acceptRejectWithdraw: builder.mutation({
+      query: (payload) => ({
+        url: `/withdraw/accept-reject`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: ["payment", "withdraw"],
+    }),
   }),
 });
 
-export const {useSendWithdrawRequestMutation, useMywithdrawHistoryQuery } = withdrawApi;
+export const {
+  useSendWithdrawRequestMutation,
+  useMywithdrawHistoryQuery,
+  useAllRequestsQuery,
+  useAcceptRejectWithdrawMutation,
+} = withdrawApi;

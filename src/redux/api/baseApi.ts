@@ -4,9 +4,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    // baseUrl: "https://api.passit.smtsigma.com/api/v1",  
-    baseUrl: "http://72.60.10.234:6800/api/v1",  
-    // baseUrl: "http://localhost:6800/api/v1",  
+    baseUrl: "http://72.60.10.234:6800/api/v1",
+    // baseUrl: "http://localhost:6800/api/v1",
 
     prepareHeaders: (headers) => {
       const { token } = JWTDecode();
@@ -19,12 +18,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: [
-    "users", 
-    "projects",
-    "earnings",
-    "payment",
-    'withdraw',
-  ],
+  tagTypes: ["users", "projects", "earnings", "payment", "withdraw"],
   endpoints: () => ({}),
 });

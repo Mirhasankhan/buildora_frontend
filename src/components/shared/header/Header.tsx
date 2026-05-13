@@ -22,6 +22,7 @@ const roleNavItems: Record<AppRole, NavItem[]> = {
     { label: "Overview", href: "/" },
     { label: "Projects", href: "/projects" },
     { label: "Workers", href: "/workers" },
+    { label: "Withdraw Requests", href: "/withdraw-requests" },
     { label: "Messages", href: "/messages" },
   ],
   SITE_MANAGER: [
