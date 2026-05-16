@@ -170,12 +170,9 @@ const ManagerProjectDetails = () => {
     ? rawProjectId[0]
     : rawProjectId;
 
-  const { data, isLoading, isFetching, isError } = useProjectDetailsQuery(
-    projectId,
-    {
-      skip: !projectId,
-    },
-  );
+  const { data, isLoading, isError } = useProjectDetailsQuery(projectId, {
+    skip: !projectId,
+  });
 
   const { data: nonPaidData } = useNonPaidDaysQuery(projectId, {
     skip: !projectId,
@@ -244,7 +241,7 @@ const ManagerProjectDetails = () => {
     );
   }
 
-  if (isLoading || isFetching) return <ProjectDetailsSkeleton />;
+  if (isLoading) return <ProjectDetailsSkeleton />;
 
   if (isError || !project) {
     return (
