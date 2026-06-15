@@ -31,7 +31,7 @@ import {
 import { toast } from "sonner";
 
 const fallbackAvatar =
-  "https://api.zenexcloud.com/emdadullah/uploads/projects/fileUrl/1770976649169-z62m87n8cqd.png";
+  "https://res.cloudinary.com/dddrm7ep8/image/upload/v1781532954/y7gdxfkl9uznjt96cjea.png";
 
 const getStatusColor = (status: string) => {
   switch (status) {

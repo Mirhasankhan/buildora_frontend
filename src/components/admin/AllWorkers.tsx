@@ -92,14 +92,14 @@ const AllWorkers = () => {
   const [search, setSearch] = useState("");
   const [workerCategory, setWorkerCategory] = useState("all");
 
-  const { data, isLoading, isFetching, isError } = useAllWorkersQuery({
+  const { data, isLoading, isError } = useAllWorkersQuery({
     page: 1,
     search,
     workerCategory: workerCategory === "all" ? "" : workerCategory,
   });
 
   const workers = data?.result?.workers || [];
-  const shouldShowSkeleton = isLoading || isFetching;
+  const shouldShowSkeleton = isLoading;
 
   if (isError) {
     return (
